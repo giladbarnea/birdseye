@@ -40,13 +40,13 @@ from birdseye import __version__
 
 try:
     from numpy import ndarray
-except ImportError:
+except Exception:
     class ndarray(object):
         pass
 
 try:
     from pandas import DataFrame, Series
-except ImportError:
+except Exception:
     class DataFrame(object):
         pass
 
@@ -56,7 +56,7 @@ except ImportError:
 
 try:
     from django.db.models import QuerySet
-except ImportError:
+except Exception:
     class QuerySet(object):
         pass
 
@@ -1099,7 +1099,10 @@ def _repr_series_one_line(x, helper):
     pieces = []
     maxparts = _repr_series_one_line.maxparts
     for i in _sample_indices(n, maxparts):
-        k = x.index[i:i + 1].format(sparsify=False)[0]
+        try:
+            k = x.index[i:i + 1].format(sparsify=False)[0]
+        except TypeError:
+            k = x.index[i:i + 1].format()[0]
         v = x.iloc[i]
         pieces.append('%s = %s' % (k, cheap_repr(v, newlevel)))
     if n > maxparts + 2:
